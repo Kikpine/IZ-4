@@ -31,7 +31,7 @@ bool Check_Input(string Input);
 
 void makeTable(vector <Table_Cell>& Table);
 
-void makeAndPrintSubstitution(string& word);
+void makeAndPrintSubstitution(string& word, vector <Table_Cell>& Table, int &process);
 
 int main()
 {
@@ -50,7 +50,11 @@ int main()
         if (Check_Input(Input_string) == 1) {
             makeTable(Table);
 
-            makeAndPrintSubstitution(Input_string);
+            Input_string = " " + Input_string;
+            int process = 1;
+            while (process) {
+                makeAndPrintSubstitution(Input_string, Table, process);
+            }
         }
         else {
             cout << "Ошибка. Строка не соответствует условию. Введите целое неотрицательное двоичное число.";
@@ -87,6 +91,11 @@ void makeTable(vector <Table_Cell> &Table) {
     fin >> table_size;
     Table = vector <Table_Cell>(table_size+1);
 
+    Table[0].old_str = "-";
+    Table[0].new_str = "-";
+    Table[0].stopper = 0;
+
+
     for (int i = 1; i <= table_size; i++) {
         getline(fin, Table[i].old_str, '\n');
         getline(fin, Table[i].old_str, '\t');
@@ -97,16 +106,26 @@ void makeTable(vector <Table_Cell> &Table) {
     return;
 }
 
-void makeAndPrintSubstitution(string &word) {
+void makeAndPrintSubstitution(string& word, vector <Table_Cell>& Table, int& process) {
 
-    string old_str = "10";  // какую подстроку заменить
-    string new_str = "@";  // на какую строку заменить
-    int start = word.find(old_str);            // находим позицию подстроки
-    if (start != -1) {
-        word.replace(start, old_str.length(), new_str); // Замена old_str на new_str
-        start = word.find(old_str, start + new_str.length());
+    int flag = 0;
+    for (int i = 0; i < Table.size(); i++) {
+        if (word.find(Table[i].old_str) != -1) {
+            flag = 1;
+
+            string old_str = Table[i].old_str;  // Какую подстроку заменить
+            string new_str= Table[i].new_str;   // На какую строку заменить
+
+            int start = word.find(old_str);     // Находим позицию подстроки
+            word.replace(start, old_str.length(), new_str);   // Замена old_str на new_str
+            start = word.find(old_str, start + new_str.length());
+
+            cout << word << endl;
+            break;
+        }
     }
-    cout << word << endl;
-
+    if (flag == 0) {
+        process = 0;
+    }
     return;
 }
