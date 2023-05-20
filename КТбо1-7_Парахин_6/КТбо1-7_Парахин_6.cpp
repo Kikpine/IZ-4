@@ -6,6 +6,7 @@
 20.05.2023
 */
 
+#include <windows.h>
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -37,6 +38,7 @@ int main()
 {
     setlocale(LC_ALL, "Russian");
 
+
     // Строка для хранения входного слова.
     string Input_string;
     // Структура данных для хранения списка подстановок.
@@ -55,6 +57,7 @@ int main()
             while (process) {
                 makeAndPrintSubstitution(Input_string, Table, process);
             }
+            cout << "Результат: " << Input_string << endl;
         }
         else {
             cout << "Ошибка. Строка не соответствует условию. Введите целое неотрицательное двоичное число.";
@@ -107,6 +110,7 @@ void makeTable(vector <Table_Cell> &Table) {
 }
 
 void makeAndPrintSubstitution(string& word, vector <Table_Cell>& Table, int& process) {
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 
     int flag = 0;
     for (int i = 0; i < Table.size(); i++) {
@@ -117,10 +121,22 @@ void makeAndPrintSubstitution(string& word, vector <Table_Cell>& Table, int& pro
             string new_str= Table[i].new_str;   // На какую строку заменить
 
             int start = word.find(old_str);     // Находим позицию подстроки
+
+            // Output
+            cout << "(" << i << ") ";
+            for (int i = 0; i < word.size(); i++) {
+                if (i >= start && i < start + old_str.size()) {
+                    SetConsoleTextAttribute(hConsole, 4);
+                }
+                cout << word[i];
+                SetConsoleTextAttribute(hConsole, 7);
+            }
+            cout << endl;
+            //
+
             word.replace(start, old_str.length(), new_str);   // Замена old_str на new_str
             start = word.find(old_str, start + new_str.length());
 
-            cout << word << endl;
             break;
         }
     }
