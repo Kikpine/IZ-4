@@ -8,7 +8,15 @@
 
 #include <iostream>
 #include <fstream>
+#include <string>
+#include <vector>
 using namespace std;
+
+typedef struct {
+    string old_str;
+    string new_str;
+    bool stopper;
+} Table_Cell;
 
 // Функция проверки вводимой строки на корректность.
 // Функция проверяет введенное пользователем слово на 
@@ -21,6 +29,8 @@ using namespace std;
 //      answer - true, если слово соответствует ограничениям, false, если не соответствует.
 bool Check_Input(string Input);
 
+void makeTable(vector <Table_Cell>& Table);
+
 void makeAndPrintSubstitution(string& word);
 
 int main()
@@ -29,6 +39,8 @@ int main()
 
     // Строка для хранения входного слова.
     string Input_string;
+    // Структура данных для хранения списка подстановок.
+    vector <Table_Cell> Table;
 
     int flag = 1;
     do {
@@ -36,6 +48,8 @@ int main()
         cin >> Input_string;
         cout << endl;
         if (Check_Input(Input_string) == 1) {
+            makeTable(Table);
+
             makeAndPrintSubstitution(Input_string);
         }
         else {
@@ -55,6 +69,34 @@ int main()
     return 0;
 }
 
+bool Check_Input(string Input) {
+    bool answer = true;
+    for (auto it = Input.begin(); it != Input.end(); it++) {
+        if (*it != '0' && *it != '1' && *it != '2') {
+            answer = false;
+        }
+    }
+    return answer;
+}
+
+void makeTable(vector <Table_Cell> &Table) {
+
+    ifstream fin("Table.txt");
+
+    int table_size;
+    fin >> table_size;
+    Table = vector <Table_Cell>(table_size+1);
+
+    for (int i = 1; i <= table_size; i++) {
+        getline(fin, Table[i].old_str, '\n');
+        getline(fin, Table[i].old_str, '\t');
+        getline(fin, Table[i].new_str, '\t');
+        fin >> Table[i].stopper;
+    }
+
+    return;
+}
+
 void makeAndPrintSubstitution(string &word) {
 
     string old_str = "10";  // какую подстроку заменить
@@ -65,14 +107,6 @@ void makeAndPrintSubstitution(string &word) {
         start = word.find(old_str, start + new_str.length());
     }
     cout << word << endl;
-}
 
-bool Check_Input(string Input) {
-    bool answer = true;
-    for (auto it = Input.begin(); it != Input.end(); it++) {
-        if (*it != '0' && *it != '1' && *it != '2') {
-            answer = false;
-        }
-    }
-    return answer;
+    return;
 }
