@@ -17,7 +17,7 @@ using namespace std;
 typedef struct Table_Cell {
     string old_str = "-";  // Подстрока, которую нужно заменить.
     string new_str = "-";  // Подстрока, на которую нужно заменить.
-    bool stopper = false;  // Является ли остановочным действием 
+    bool stopper = false;  // Является ли остaновочным действием 
                            // (true - является, false - не является)
 } Table_Cell;
 
