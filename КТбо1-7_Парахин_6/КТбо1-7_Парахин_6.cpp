@@ -131,10 +131,11 @@ void makeAndPrintSubstitution(string& word, vector <Table_Cell>& Table, int& pro
                 cout << word[i];
                 SetConsoleTextAttribute(hConsole, 7);
             }
-            cout << endl;
             //
 
             word.replace(start, old_str.length(), new_str);   // Замена old_str на new_str
+            cout << " -> " << word << endl;
+
             start = word.find(old_str, start + new_str.length());
 
             break;
