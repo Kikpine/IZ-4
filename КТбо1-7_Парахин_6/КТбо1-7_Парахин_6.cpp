@@ -13,10 +13,10 @@
 #include <vector>
 using namespace std;
 
-typedef struct {
-    string old_str;
-    string new_str;
-    bool stopper;
+typedef struct Table_Cell {
+    string old_str = "-";
+    string new_str = "-";
+    bool stopper = 0;
 } Table_Cell;
 
 // Функция проверки вводимой строки на корректность.
@@ -32,7 +32,7 @@ bool Check_Input(string Input);
 
 void makeTable(vector <Table_Cell>& Table);
 
-void makeAndPrintSubstitution(string& word, vector <Table_Cell>& Table, int &process);
+void makeAndPrintSubstitution(string& word, vector <Table_Cell>& Table, bool &process);
 
 int main()
 {
@@ -48,19 +48,18 @@ int main()
     do {
         cout << "Введите входное слово: ";
         cin >> Input_string;
-        cout << endl;
+
         if (Check_Input(Input_string) == 1) {
             makeTable(Table);
 
-            Input_string = " " + Input_string;
-            int process = 1;
+            bool process = true;
             while (process) {
                 makeAndPrintSubstitution(Input_string, Table, process);
             }
-            cout << "Результат: " << Input_string << endl;
+            cout << "Результат:" << Input_string << endl;
         }
         else {
-            cout << "Ошибка. Строка не соответствует условию. Введите целое неотрицательное двоичное число.";
+            cout << "Ошибка. Строка не соответствует условию. Введите целое неотрицательное троичное число.";
         }
 
         cout << endl << "Хотите ввести входные данные заново или выйти из программы? (1 - Ввести входные данные заново, 0 - Выйти из программы) : ";
@@ -94,11 +93,6 @@ void makeTable(vector <Table_Cell> &Table) {
     fin >> table_size;
     Table = vector <Table_Cell>(table_size+1);
 
-    Table[0].old_str = "-";
-    Table[0].new_str = "-";
-    Table[0].stopper = 0;
-
-
     for (int i = 1; i <= table_size; i++) {
         getline(fin, Table[i].old_str, '\n');
         getline(fin, Table[i].old_str, '\t');
@@ -109,8 +103,11 @@ void makeTable(vector <Table_Cell> &Table) {
     return;
 }
 
-void makeAndPrintSubstitution(string& word, vector <Table_Cell>& Table, int& process) {
+void makeAndPrintSubstitution(string& word, vector <Table_Cell>& Table, bool& process) {
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    if (word[0] != ' ') {
+        word = " " + word;
+    }
 
     int flag = 0;
     for (int i = 0; i < Table.size(); i++) {
@@ -123,7 +120,7 @@ void makeAndPrintSubstitution(string& word, vector <Table_Cell>& Table, int& pro
             int start = word.find(old_str);     // Находим позицию подстроки
 
             // Output
-            cout << "(" << i << ") ";
+            cout << "(" << i << ")";
             for (int i = 0; i < word.size(); i++) {
                 if (i >= start && i < start + old_str.size()) {
                     SetConsoleTextAttribute(hConsole, 4);
@@ -134,10 +131,16 @@ void makeAndPrintSubstitution(string& word, vector <Table_Cell>& Table, int& pro
             //
 
             word.replace(start, old_str.length(), new_str);   // Замена old_str на new_str
-            cout << " -> " << word << endl;
+
+            if (word[0] != ' ') {
+                word = " " + word;
+            }
+
+            cout << " ->" << word << endl;
 
             start = word.find(old_str, start + new_str.length());
 
+            process = Table[i].stopper;
             break;
         }
     }
